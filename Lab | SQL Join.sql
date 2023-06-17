@@ -12,19 +12,17 @@ FROM staff s
 JOIN address a ON s.address_id = a.address_id;
 
 -- 3. Display the total amount rung up by each staff member in August 2005.
-SELECT staff_id, CONCAT(first_name, ' ', last_name) AS staff_name, SUM(amount) AS total_amount
-FROM payment
-JOIN staff ON payment.staff_id = staff.staff_id
-WHERE payment_date >= '2005-08-01' AND payment_date <= '2005-08-31'
-GROUP BY staff_id, staff_name;
+select p.staff_id, sum(p.amount) as total_amount
+from payment p
+left join staff s on p.staff_id = s.staff_id
+where year(p.payment_date)=2005 and month(p.payment_date)=8
+group by p.staff_id;
 
 -- 4. List all films and the number of actors who are listed for each film.
-SELECT s.first_name, s.last_name, a.address, SUM(p.amount) AS total_amount
-FROM staff s
-JOIN address a ON s.address_id = a.address_id
-JOIN payment p ON s.staff_id = p.staff_id
-WHERE p.payment_date >= '2005-08-01' AND p.payment_date <= '2005-08-31'
-GROUP BY s.staff_id, s.first_name, s.last_name, a.address;
+select f.title, count(fa.actor_id) from film f
+left join film_actor fa on f.film_id = fa.film_id
+group by f.title;
+
 
 -- 5. Using the payment and the customer tables as well as the JOIN command, list the total amount paid by each customer. List the customers alphabetically by their last names.
 SELECT c.customer_id, CONCAT(c.first_name, ' ', c.last_name) AS customer_name, SUM(p.amount) AS total_amount_paid
